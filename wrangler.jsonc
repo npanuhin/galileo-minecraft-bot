@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "galileo-minecraft-bot",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-10-26",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "invocation_logs": false
+    }
+  },
+  "workers_dev": true,
+  "preview_urls": false,
+  "triggers": {
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "kv_namespaces": [
+    {
+      "binding": "GALILEO_MINECRAFT_BOT_DATA",
+      "id": "12d33a96331a47479043938f2b5b0421"
+    }
+  ]
+}

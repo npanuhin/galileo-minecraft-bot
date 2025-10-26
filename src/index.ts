@@ -1,55 +1,67 @@
-import { setEnv } from './telegram/utils/envManager';
-import { handleWebhook } from './telegram/utils/handleUpdates';
-import { tg } from './telegram/lib/methods';
+import {setEnv} from './telegram/utils/envManager'
+import {handleWebhook} from './telegram/utils/handleUpdates'
+import {tg} from './telegram/lib/methods'
+import {handleScheduled} from './scheduled/handleScheduled'
 
-// use `npm run cf-typegen` to regenerate `worker-configuration.d.ts`
+// use `npm run gen` to regenerate `worker-configuration.d.ts`
 export interface Env {
-    SECRET: string;  // Telegram bot API secret
-    TOKEN: string;   // Telegram bot API token
-    // Add more environment variables here
+	TELEGRAM_SECRET: string  // Telegram bot API secret
+	TELEGRAM_TOKEN: string   // Telegram bot API token
+	TELEGRAM_CHAT_ID: string
+
+	EXAROTON_SERVER_ID: string
+	EXAROTON_API_TOKEN: string
+	EXAROTON_POOL_ID: string
+
+	GALILEO_MINECRAFT_BOT_DATA: KVNamespace
 }
 
 // Define constant paths for webhook management.
-const WEBHOOK: string = '/endpoint';
-const REGISTER: string = '/registerWebhook';
-const UNREGISTER: string = '/unRegisterWebhook';
+const WEBHOOK: string = '/endpoint'
+const REGISTER: string = '/registerWebhook'
+const UNREGISTER: string = '/unRegisterWebhook'
 
 export default {
-    async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-        setEnv(env);
-        const url: URL = new URL(request.url);
+	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+		setEnv(env)
+		const url: URL = new URL(request.url)
 
-        if (url.pathname === WEBHOOK) {
-            return handleWebhook(request);
-        } else if (url.pathname === REGISTER) {
-            try {
-                const result = await tg.setWebhook({
-                    url: `${url.protocol}//${url.hostname}${WEBHOOK}`,
-                    secret_token: env.SECRET,
-                });
-                if (result) return new Response('Webhook registered.');
-                else return new Response('Failed to register webhook.');
-            } catch (error) {
-                ctx.waitUntil((async () => {
-                    return new Promise(resolve => {
-                        console.log(`Error: ${error}`);
-                        resolve(error);
-                    });
-                })());
-                return new Response(`Error: ${error}`);
-            }
-        } else if (url.pathname === UNREGISTER) {
-            try {
-                const result = await tg.setWebhook({
-                    url: '',
-                });
-                if (result) return new Response('Webhook unregistered.');
-                else return new Response('Failed to unregister webhook.');
-            } catch (error) {
-                return new Response(`Error: ${error}`);
-            }
-        } else {
-            return new Response('Not found', { status: 404 });
-        }
-    },
-} satisfies ExportedHandler<Env>;
+		if (url.pathname === WEBHOOK) {
+			return handleWebhook(request)
+		} else if (url.pathname === REGISTER) {
+			try {
+				const result = await tg.setWebhook({
+					url: `${url.protocol}//${url.hostname}${WEBHOOK}`,
+					secret_token: env.TELEGRAM_SECRET,
+				})
+				if (result) return new Response('Webhook registered.')
+				else return new Response('Failed to register webhook.')
+			} catch (error) {
+				ctx.waitUntil((async () => {
+					return new Promise(resolve => {
+						console.log(`Error: ${error}`)
+						resolve(error)
+					})
+				})())
+				return new Response(`Error: ${error}`)
+			}
+		} else if (url.pathname === UNREGISTER) {
+			try {
+				const result = await tg.setWebhook({
+					url: '',
+				})
+				if (result) return new Response('Webhook unregistered.')
+				else return new Response('Failed to unregister webhook.')
+			} catch (error) {
+				return new Response(`Error: ${error}`)
+			}
+		} else {
+			return new Response('Not found', {status: 404})
+		}
+	},
+
+	async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+		setEnv(env)
+		ctx.waitUntil(handleScheduled())
+	},
+} satisfies ExportedHandler<Env>

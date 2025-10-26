@@ -1,14 +1,14 @@
-import { getEnv } from './envManager';
-import * as handlers from '../handlers';
+import { getEnv } from './envManager'
+import * as handlers from '../handlers'
 
 export async function handleWebhook(request: Request): Promise<Response> {
-    if (request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== getEnv().SECRET) {
-        return new Response('Unauthorized', { status: 403 });
+    if (request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== getEnv().TELEGRAM_SECRET) {
+        return new Response('Unauthorized', { status: 403 })
     }
-    const update: tgTypes.Update = await request.json();
-    await onUpdate(update);
+    const update: tgTypes.Update = await request.json()
+    await onUpdate(update)
 
-    return new Response(JSON.stringify(update, null, 2));
+    return new Response(JSON.stringify(update, null, 2))
 }
 
 const updateHandlers: Map<keyof tgTypes.Update, (update: any) => Promise<void>> = new Map([
@@ -34,17 +34,17 @@ const updateHandlers: Map<keyof tgTypes.Update, (update: any) => Promise<void>> 
     ['chat_join_request', (update) => handlers.handleChatJoinRequest(update as tgTypes.ChatJoinRequest)],
     ['chat_boost', (update) => handlers.handleChatBoost(update as tgTypes.ChatBoostUpdated)],
     ['removed_chat_boost', (update) => handlers.handleRemovedChatBoost(update as tgTypes.ChatBoostRemoved)],
-]);
+])
 
 async function onUpdate(update: tgTypes.Update) {
     try {
         for (const [key, handler] of updateHandlers) {
             if (update[key]) {
-                await handler(update[key]);
-                break;
+                await handler(update[key])
+                break
             }
         }
     } catch (error) {
-        console.error('Error handling update:', error);
+        console.error('Error handling update:', error)
     }
 }
