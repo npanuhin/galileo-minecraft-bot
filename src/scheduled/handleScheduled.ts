@@ -5,7 +5,11 @@ import {getServerStatus} from '../exaroton/api'
 
 export async function handleScheduled() {
 	const env = getEnv()
-	const {playerCount: lastPlayerCount, messageId: lastMessageId} = await getPlayerState()
+	const {
+		playerCount: lastPlayerCount,
+		messageId: lastMessageId,
+		messageText: lastMessageText
+	} = await getPlayerState()
 
 	let server
 	try {
@@ -18,7 +22,7 @@ export async function handleScheduled() {
 			} catch (e) {
 				console.error('Failed to delete message on API error:', e)
 			} finally {
-				await setPlayerState(0, null)
+				await setPlayerState()
 			}
 		}
 		return
@@ -42,8 +46,10 @@ export async function handleScheduled() {
 		if (lastMessageId) {
 			try {
 				// console.log(`Editing message ${lastMessageId} to: "${messageText}"`)
-				await editMessage(env.TELEGRAM_CHAT_ID, lastMessageId, messageText)
-				await setPlayerState(currentPlayerCount, lastMessageId)
+				if (messageText !== lastMessageText) {
+					await editMessage(env.TELEGRAM_CHAT_ID, lastMessageId, messageText)
+				}
+				await setPlayerState(currentPlayerCount, lastMessageId, messageText)
 			} catch (error: any) {
 				console.error('Failed to edit message:', error)
 				// If the message was deleted manually, create a new one
@@ -58,7 +64,7 @@ export async function handleScheduled() {
 		} else {
 			console.log(`Sending new status message: "${messageText}"`)
 			const newMessage = await sendMessage(env.TELEGRAM_CHAT_ID, messageText, true)
-			await setPlayerState(currentPlayerCount, newMessage.message_id)
+			await setPlayerState(currentPlayerCount, newMessage.message_id, messageText)
 		}
 	} else {
 		if (lastMessageId) {
@@ -68,7 +74,7 @@ export async function handleScheduled() {
 			} catch (e) {
 				console.error('Failed to delete status message:', e)
 			} finally {
-				await setPlayerState(0, null)
+				await setPlayerState()
 			}
 		}
 		return
