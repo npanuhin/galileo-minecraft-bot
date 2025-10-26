@@ -1,6 +1,6 @@
-import {getEnv} from '../utils/envManager'
-import {tg} from '../lib/methods'
 import {getServerStatus, SERVER_STATUS_MAP} from '../../exaroton/api'
+import {sendMessage} from '../telegramApi'
+import {getEnv} from '../utils/envManager'
 
 interface ExarotonBillingPool {
 	id: string
@@ -16,9 +16,9 @@ interface ExarotonBillingPool {
 
 const API_BASE_URL = 'https://api.exaroton.com/v1'
 
-type CommandHandler = (sendMessage: (text: string) => Promise<void>, env: ReturnType<typeof getEnv>) => Promise<void>
+type CommandHandler = (chatId: string | number, env: ReturnType<typeof getEnv>) => Promise<void>
 
-const handleStatusCommand: CommandHandler = async (sendMessage) => {
+const handleStatusCommand: CommandHandler = async (chatId) => {
 	try {
 		const server = await getServerStatus()
 		const status = server.status
@@ -30,14 +30,14 @@ const handleStatusCommand: CommandHandler = async (sendMessage) => {
 			replyText = SERVER_STATUS_MAP[status] || '❓ Неизвестный статус'
 		}
 
-		await sendMessage(replyText)
+		await sendMessage(chatId, replyText, true)
 	} catch (error: any) {
 		console.error(error)
-		await sendMessage(`❌ Ошибка: ${error.message}`)
+		await sendMessage(chatId, `❌ Ошибка: ${error.message}`, true)
 	}
 }
 
-const handleBalanceCommand: CommandHandler = async (sendMessage, env) => {
+const handleBalanceCommand: CommandHandler = async (chatId, env) => {
 	try {
 		const response = await fetch(`${API_BASE_URL}/billing/pools/${env.EXAROTON_POOL_ID}`, {
 			method: 'GET',
@@ -57,10 +57,10 @@ const handleBalanceCommand: CommandHandler = async (sendMessage, env) => {
 		const hoursLeft = Math.round((pool.credits / 7) * 10) / 10
 		const replyText = `💰 ${pool.credits} кредитов\nХватит на ≈${hoursLeft} часов`
 
-		await sendMessage(replyText)
+		await sendMessage(chatId, replyText, true)
 	} catch (error: any) {
 		console.error(error)
-		await sendMessage(`❌ Ошибка: ${error.message}`)
+		await sendMessage(chatId, `❌ Ошибка: ${error.message}`, true)
 	}
 }
 
@@ -88,27 +88,14 @@ export async function handleMessage(message: tgTypes.Message) {
 	// User-friendly identifier for logs: first + last name + @username if available.
 	const user = message.from
 	const userIdentifier = user
-		? `[ChatID: ${chatId}, UserID: ${user.id}, User: ${user.first_name} ${user.last_name || ''}${user.username ? ` (@${user.username})` : ''}]`.trim()
+		? `[ChatID: ${chatId}, UserID: ${user.id}, User: ${user.first_name} ${user.last_name || ''}${user.username ? ` (@${user.username})` : ''}]`
 		: `[ChatID: ${chatId}]`
 
 	console.log(`<- Received from ${userIdentifier}: "${messageText}"`)
 
-	/**
-	 * Helper function to send messages to the current chat and log the reply.
-	 * @param text The message text to send.
-	 */
-	const sendMessage = async (text: string) => {
-		const trimmedText = text.trim()
-		console.log(`-> Replying to ${userIdentifier}: "${trimmedText.replace(/\n/g, '\\n')}"`)
-		await tg.sendMessage({
-			chat_id: chatId,
-			text: trimmedText,
-		})
-	}
-
 	for (const command of commandRouter) {
 		if (command.regex.test(messageText)) {
-			await command.handler(sendMessage, env)
+			await command.handler(chatId, env)
 			return
 		}
 	}

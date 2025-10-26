@@ -1,7 +1,7 @@
-import {getServerStatus} from '../exaroton/api'
-import {getPlayerState, setPlayerState} from '../utils/kvManager'
 import {sendMessage, editMessage, deleteMessage} from '../telegram/telegramApi'
+import {getPlayerState, setPlayerState} from '../utils/kvManager'
 import {getEnv} from '../telegram/utils/envManager'
+import {getServerStatus} from '../exaroton/api'
 
 export async function handleScheduled() {
 	const env = getEnv()
@@ -57,7 +57,7 @@ export async function handleScheduled() {
 			}
 		} else {
 			console.log(`Sending new status message: "${messageText}"`)
-			const newMessage = await sendMessage(env.TELEGRAM_CHAT_ID, messageText)
+			const newMessage = await sendMessage(env.TELEGRAM_CHAT_ID, messageText, true)
 			await setPlayerState(currentPlayerCount, newMessage.message_id)
 		}
 	} else {
