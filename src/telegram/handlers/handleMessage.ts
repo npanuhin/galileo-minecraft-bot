@@ -64,16 +64,11 @@ const handleBalanceCommand: CommandHandler = async (chatId, env) => {
 	}
 }
 
-const handleAliceNotifyOnCommand: CommandHandler = async (chatId) => {
-	await sendMessage(chatId, 'Хорошо, включаю...', true)
-}
-
 const handleAliceDeleteCommand: CommandHandler = async (chatId, env) => {
 	await sendMessage(chatId, 'Хорошо, удаляю файл сохранений...', true)
 	await new Promise(resolve => setTimeout(resolve, 2500))
 	await sendMessage(chatId, 'Файл сохранений успешно удалён 👍', true)
 }
-
 
 const commandRouter: { regex: RegExp, handler: CommandHandler }[] = [
 	{
@@ -83,10 +78,6 @@ const commandRouter: { regex: RegExp, handler: CommandHandler }[] = [
 	{
 		regex: /^(\/?(balance|баланс|credits|кредиты))(?:@galileo_minecraft_bot)?\?*$/i,
 		handler: handleBalanceCommand,
-	},
-	{
-		regex: /^алиса, включи уведомления$/i,
-		handler: handleAliceNotifyOnCommand,
 	},
 	{
 		regex: /^алиса/i,
