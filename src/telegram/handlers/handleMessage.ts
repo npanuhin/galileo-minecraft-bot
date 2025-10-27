@@ -1,6 +1,7 @@
-import {getServerStatus, SERVER_STATUS_MAP} from '../../exaroton/api'
+import {getServerStatus} from '../../exaroton/api'
 import {sendMessage} from '../telegramApi'
 import {getEnv} from '../utils/envManager'
+import {locales} from '../utils/locales'
 
 interface ExarotonBillingPool {
 	id: string
@@ -25,15 +26,15 @@ const handleStatusCommand: CommandHandler = async (chatId) => {
 		let replyText: string
 
 		if (status === 1) { // ONLINE
-			replyText = `${SERVER_STATUS_MAP[status]}: ${server.players.count}`
+			replyText = locales.status.onlineWithPlayers(status, server.players.count)
 		} else {
-			replyText = SERVER_STATUS_MAP[status] || '❓ Неизвестный статус'
+			replyText = locales.serverStatus[status] || locales.status.unknown
 		}
 
 		await sendMessage(chatId, replyText, true)
 	} catch (error: any) {
 		console.error(error)
-		await sendMessage(chatId, `❌ Ошибка: ${error.message}`, true)
+		await sendMessage(chatId, locales.errors.generic(error.message), true)
 	}
 }
 
@@ -55,26 +56,23 @@ const handleBalanceCommand: CommandHandler = async (chatId, env) => {
 		const pool = jsonResponse.data
 
 		const hoursLeft = Math.round((pool.credits / 7) * 10) / 10
-		const replyText = `💰 ${pool.credits} кредитов\nХватит на ≈${hoursLeft} часов`
+		const replyText = locales.balance.reply(pool.credits, hoursLeft)
 
 		await sendMessage(chatId, replyText, true)
 	} catch (error: any) {
 		console.error(error)
-		await sendMessage(chatId, `❌ Ошибка: ${error.message}`, true)
+		await sendMessage(chatId, locales.errors.generic(error.message), true)
 	}
 }
 
 const handleAliceDeleteCommand: CommandHandler = async (chatId, env) => {
-	await sendMessage(chatId, 'Хорошо, удаляю файл сохранений...', true)
+	await sendMessage(chatId, locales.alice.starting, true)
 	await new Promise(resolve => setTimeout(resolve, 2500))
-	await sendMessage(chatId, 'Файл сохранений успешно удалён 👍', true)
+	await sendMessage(chatId, locales.alice.done, true)
 }
 
 const handleHelpCommand: CommandHandler = async (chatId) => {
-	const helpText = `Список команд:
-/status — Что по серверу?
-/balance — Сколько кредитов осталось?`
-	await sendMessage(chatId, helpText, true)
+	await sendMessage(chatId, locales.help, true)
 }
 
 const commandRouter: { regex: RegExp, handler: CommandHandler }[] = [

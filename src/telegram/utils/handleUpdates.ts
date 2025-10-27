@@ -1,9 +1,10 @@
-import { getEnv } from './envManager'
+import {getEnv} from './envManager'
 import * as handlers from '../handlers'
+import {locales} from './locales'
 
 export async function handleWebhook(request: Request): Promise<Response> {
     if (request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== getEnv().TELEGRAM_SECRET) {
-        return new Response('Unauthorized', { status: 403 })
+        return new Response(locales.unauthorized, {status: 403})
     }
     const update: tgTypes.Update = await request.json()
     await onUpdate(update)
