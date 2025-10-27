@@ -38,11 +38,11 @@ export async function handleScheduled() {
 	}
 
 	if (isServerOnline) {
-		// const messageText = currentPlayerCount > 0
-		// 	? `Го майн, ${currentPlayerCount} онлайн 😎`
-		// 	: 'Го майн, мы онлайн 😎'
+		const messageText = currentPlayerCount > 0
+			? `Го майн, ${currentPlayerCount} онлайн 😎`
+			: 'Го майн, мы онлайн 😎'
 
-		const messageText = locales.scheduled.goMine
+		// const messageText = locales.scheduled.goMine
 
 		if (lastMessageId) {
 			try {
