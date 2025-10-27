@@ -1,6 +1,6 @@
 import {tg} from './lib/methods'
 
-export async function sendMessage(chatId: string | number, text: string, disableNotification?: boolean): Promise<tgTypes.Message> {
+export async function sendMessage(chatId: string | number, text: string, disableNotification: boolean = true): Promise<tgTypes.Message> {
 	const trimmedText = text.trim()
 	console.log(`-> Replying to [ChatID: ${chatId}]: "${trimmedText.replace(/\n/g, '\\n')}"`)
 	return tg.sendMessage({chat_id: chatId, text: trimmedText, disable_notification: disableNotification})

@@ -70,9 +70,20 @@ const handleAliceDeleteCommand: CommandHandler = async (chatId, env) => {
 	await sendMessage(chatId, 'Файл сохранений успешно удалён 👍', true)
 }
 
+const handleHelpCommand: CommandHandler = async (chatId) => {
+	const helpText = `Список команд:
+/status — Что по серверу?
+/balance — Сколько кредитов осталось?`
+	await sendMessage(chatId, helpText, true)
+}
+
 const commandRouter: { regex: RegExp, handler: CommandHandler }[] = [
 	{
-		regex: /^(\/?стат(?:ус)?|\/?stat(?:us)?|\/?сервер|\/?онлайн|чё как|че как|что как)(?:@galileo_minecraft_bot)?\?*$/i,
+		regex: /^(\/?(start|старт))(?:@galileo_minecraft_bot)?\?*$/i,
+		handler: handleHelpCommand,
+	},
+	{
+		regex: /^(\/?(стат(?:ус)?|stat(?:us)?|сервер|онлайн)|чё как|че как|что как)(?:@galileo_minecraft_bot)?\?*$/i,
 		handler: handleStatusCommand,
 	},
 	{
