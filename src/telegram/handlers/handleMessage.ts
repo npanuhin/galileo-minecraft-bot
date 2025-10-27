@@ -89,7 +89,7 @@ const commandRouter: { regex: RegExp, handler: CommandHandler }[] = [
 		handler: handleBalanceCommand,
 	},
 	{
-		regex: /^алиса/i,
+		regex: /^(\/?(alice|алиса))/i,
 		handler: handleAliceDeleteCommand,
 	},
 ]
