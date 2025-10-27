@@ -65,12 +65,6 @@ const handleBalanceCommand: CommandHandler = async (chatId, env) => {
 	}
 }
 
-const handleAliceDeleteCommand: CommandHandler = async (chatId, env) => {
-	await sendMessage(chatId, locales.alice.starting, true)
-	await new Promise(resolve => setTimeout(resolve, 2500))
-	await sendMessage(chatId, locales.alice.done, true)
-}
-
 const handleHelpCommand: CommandHandler = async (chatId) => {
 	await sendMessage(chatId, locales.help, true)
 }
@@ -87,10 +81,6 @@ const commandRouter: { regex: RegExp, handler: CommandHandler }[] = [
 	{
 		regex: /^(\/?(balance|баланс|credits|кредиты))(?:@galileo_minecraft_bot)?\?*$/i,
 		handler: handleBalanceCommand,
-	},
-	{
-		regex: /^(\/?(alice|алиса))/i,
-		handler: handleAliceDeleteCommand,
 	},
 ]
 
