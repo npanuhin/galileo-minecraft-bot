@@ -1,6 +1,6 @@
 import {getEnv} from './envManager'
 import * as handlers from '../handlers'
-import {locales} from './locales'
+import {locales} from '../../locales'
 
 export async function handleWebhook(request: Request): Promise<Response> {
     if (request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== getEnv().TELEGRAM_SECRET) {

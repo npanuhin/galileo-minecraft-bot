@@ -1,7 +1,7 @@
 import {getServerStatus} from '../../exaroton/api'
 import {sendMessage} from '../telegramApi'
 import {getEnv} from '../utils/envManager'
-import {locales} from '../utils/locales'
+import {locales} from '../../locales'
 
 interface ExarotonBillingPool {
 	id: string

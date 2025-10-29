@@ -1,5 +1,5 @@
 import {getEnv} from '../telegram/utils/envManager'
-import {locales} from '../telegram/utils/locales'
+import {locales} from '../locales'
 
 export interface ExarotonServer {
 	id: string

@@ -31,7 +31,9 @@ export const locales = {
 		api: (status: number, message: string) => `API Error: ${status} - ${message}`,
 	},
 	scheduled: {
-		goMine: 'Го майн, мы онлайн 😎',
+		goMine: (playerCount: number) => playerCount > 0
+			? `🚀 Го майн, ${playerCount} онлайн`
+			: '🚀 Го майн, мы онлайн',
 	},
 	webhook: {
 		registered: 'Webhook registered.',

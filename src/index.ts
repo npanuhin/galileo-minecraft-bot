@@ -2,7 +2,7 @@ import {setEnv} from './telegram/utils/envManager'
 import {handleWebhook} from './telegram/utils/handleUpdates'
 import {tg} from './telegram/lib/methods'
 import {handleScheduled} from './scheduled/handleScheduled'
-import {locales} from './telegram/utils/locales'
+import {locales} from './locales'
 
 // use `npm run gen` to regenerate `worker-configuration.d.ts`
 export interface Env {

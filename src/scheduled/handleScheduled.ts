@@ -1,8 +1,8 @@
 import {sendMessage, editMessage, deleteMessage} from '../telegram/telegramApi'
-import {getPlayerState, setPlayerState} from '../utils/kvManager'
+import {getPlayerState, setPlayerState} from '../cloudflare/KV'
 import {getEnv} from '../telegram/utils/envManager'
+import {locales} from '../locales'
 import {getServerStatus} from '../exaroton/api'
-import {locales} from '../telegram/utils/locales'
 
 export async function handleScheduled() {
 	const env = getEnv()
@@ -38,11 +38,7 @@ export async function handleScheduled() {
 	}
 
 	if (isServerOnline) {
-		const messageText = currentPlayerCount > 0
-			? `Го майн, ${currentPlayerCount} онлайн 😎`
-			: 'Го майн, мы онлайн 😎'
-
-		// const messageText = locales.scheduled.goMine
+		const messageText = locales.scheduled.goMine(currentPlayerCount)
 
 		if (lastMessageId) {
 			try {
