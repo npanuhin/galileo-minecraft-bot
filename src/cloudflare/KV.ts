@@ -1,4 +1,4 @@
-import {getEnv} from '../telegram/utils/envManager'
+import { getEnv } from '../telegram/utils/envManager'
 
 const PLAYER_COUNT_KEY = 'lastPlayerCount'
 const MESSAGE_ID_KEY = 'statusMessageId'

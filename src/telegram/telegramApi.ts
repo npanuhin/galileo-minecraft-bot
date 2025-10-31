@@ -1,5 +1,5 @@
-import {locales} from '../locales'
-import {tg} from './lib/methods'
+import { tg } from '../../lib/telegram/lib/methods'
+import { messages } from '../messages/en'
 
 // --- Send Message ---
 export interface SendMessageOptions {
@@ -28,7 +28,7 @@ export async function sendMessage({
 			})
 		} catch (error) {
 			console.error(`!!! MarkdownV2 sending failed for [ChatID: ${chatId}]. Falling back to plain text.`, error)
-			return sendMessage({chatId, text: locales.errors.markdownV2, disableNotification, useMarkdownV2: false})
+			return sendMessage({chatId, text: messages.errors.markdownV2, disableNotification, useMarkdownV2: false})
 		}
 	}
 
@@ -63,7 +63,7 @@ export async function editMessage({
 			})
 		} catch (error) {
 			console.error(`!!! MarkdownV2 editing failed for message ${messageId} in [ChatID: ${chatId}]. Falling back to plain text.`, error)
-			// return editMessage({chatId, messageId, text: locales.errors.markdownV2, useMarkdownV2: false})
+			// return editMessage({chatId, messageId, text: en.errors.markdownV2, useMarkdownV2: false})
 			return false
 		}
 	}
@@ -78,7 +78,10 @@ export interface DeleteMessageOptions {
 	messageId: number;
 }
 
-export async function deleteMessage({chatId, messageId}: DeleteMessageOptions): Promise<boolean> {
+export async function deleteMessage({
+	chatId,
+	messageId,
+}: DeleteMessageOptions): Promise<boolean> {
 	console.log(`-> Deleting message ${messageId} in [ChatID: ${chatId}]`)
 	return tg.deleteMessage({chat_id: chatId, message_id: messageId})
 }

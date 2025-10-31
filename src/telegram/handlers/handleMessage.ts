@@ -1,7 +1,7 @@
-import {getServerStatus} from '../../exaroton/api'
-import {sendMessage} from '../telegramApi'
-import {getEnv} from '../utils/envManager'
-import {locales} from '../../locales'
+import { getServerStatus } from '../../exaroton/api'
+import { sendMessage } from '../telegramApi'
+import { getEnv } from '../utils/envManager'
+import { messages } from '../../messages/en'
 
 interface ExarotonBillingPool {
 	id: string
@@ -26,15 +26,15 @@ const handleStatusCommand: CommandHandler = async (chatId) => {
 		let replyText: string
 
 		if (status === 1) { // ONLINE
-			replyText = locales.status.onlineWithPlayers(status, server.players.count)
+			replyText = messages.status.onlineWithPlayers(status, server.players.count)
 		} else {
-			replyText = locales.serverStatus[status] || locales.status.unknown
+			replyText = messages.serverStatus[status] || messages.status.unknown
 		}
 
 		await sendMessage({chatId, text: replyText})
 	} catch (error: any) {
 		console.error(error)
-		await sendMessage({chatId, text: locales.errors.generic(error.message)})
+		await sendMessage({chatId, text: messages.errors.generic(error.message)})
 	}
 }
 
@@ -56,17 +56,17 @@ const handleBalanceCommand: CommandHandler = async (chatId, env) => {
 		const pool = jsonResponse.data
 
 		const hoursLeft = Math.round((pool.credits / 7) * 10) / 10
-		const replyText = locales.balance.reply(pool.credits, hoursLeft)
+		const replyText = messages.balance.reply(pool.credits, hoursLeft)
 
 		await sendMessage({chatId, text: replyText})
 	} catch (error: any) {
 		console.error(error)
-		await sendMessage({chatId, text: locales.errors.generic(error.message)})
+		await sendMessage({chatId, text: messages.errors.generic(error.message)})
 	}
 }
 
 const handleHelpCommand: CommandHandler = async (chatId) => {
-	await sendMessage({chatId, text: locales.help})
+	await sendMessage({chatId, text: messages.help})
 }
 
 const commandRouter: { regex: RegExp, handler: CommandHandler }[] = [

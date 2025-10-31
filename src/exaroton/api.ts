@@ -1,5 +1,5 @@
-import {getEnv} from '../telegram/utils/envManager'
-import {locales} from '../locales'
+import { getEnv } from '../telegram/utils/envManager'
+import { messages } from '../messages/en'
 
 export interface ExarotonServer {
 	id: string
@@ -26,13 +26,13 @@ export async function getServerStatus(): Promise<ExarotonServer> {
 	const response = await fetch(`${API_BASE_URL}/servers/${env.EXAROTON_SERVER_ID}`, {
 		method: 'GET',
 		headers: {
-			'Authorization': `Bearer ${env.EXAROTON_API_TOKEN}`
-		}
+			'Authorization': `Bearer ${env.EXAROTON_API_TOKEN}`,
+		},
 	})
 
 	if (!response.ok) {
 		const errorData = await response.json() as { error?: string }
-		throw new Error(locales.errors.api(response.status, errorData.error || response.statusText))
+		throw new Error(messages.errors.api(response.status, errorData.error || response.statusText))
 	}
 
 	const jsonResponse = await response.json() as { data: ExarotonServer }
