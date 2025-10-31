@@ -1,7 +1,7 @@
-import {setEnv} from './telegram/utils/envManager'
 import {handleWebhook} from './telegram/utils/handleUpdates'
-import {tg} from './telegram/lib/methods'
 import {handleScheduled} from './scheduled/handleScheduled'
+import {setEnv} from './telegram/utils/envManager'
+import {tg} from './telegram/lib/methods'
 import {locales} from './locales'
 
 // use `npm run gen` to regenerate `worker-configuration.d.ts`
@@ -57,7 +57,7 @@ export default {
 				return new Response(locales.webhook.error(error))
 			}
 		} else {
-			return new Response(locales.notFound, {status: 404})
+			return new Response(locales.http.notFound, {status: 404})
 		}
 	},
 

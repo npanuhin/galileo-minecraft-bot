@@ -31,10 +31,10 @@ const handleStatusCommand: CommandHandler = async (chatId) => {
 			replyText = locales.serverStatus[status] || locales.status.unknown
 		}
 
-		await sendMessage(chatId, replyText, true)
+		await sendMessage({chatId, text: replyText})
 	} catch (error: any) {
 		console.error(error)
-		await sendMessage(chatId, locales.errors.generic(error.message), true)
+		await sendMessage({chatId, text: locales.errors.generic(error.message)})
 	}
 }
 
@@ -58,20 +58,20 @@ const handleBalanceCommand: CommandHandler = async (chatId, env) => {
 		const hoursLeft = Math.round((pool.credits / 7) * 10) / 10
 		const replyText = locales.balance.reply(pool.credits, hoursLeft)
 
-		await sendMessage(chatId, replyText, true)
+		await sendMessage({chatId, text: replyText})
 	} catch (error: any) {
 		console.error(error)
-		await sendMessage(chatId, locales.errors.generic(error.message), true)
+		await sendMessage({chatId, text: locales.errors.generic(error.message)})
 	}
 }
 
 const handleHelpCommand: CommandHandler = async (chatId) => {
-	await sendMessage(chatId, locales.help, true)
+	await sendMessage({chatId, text: locales.help})
 }
 
 const commandRouter: { regex: RegExp, handler: CommandHandler }[] = [
 	{
-		regex: /^(\/?(start|старт))(?:@galileo_minecraft_bot)?\?*$/i,
+		regex: /^(\/?(start))(?:@galileo_minecraft_bot)?\?*$/i,
 		handler: handleHelpCommand,
 	},
 	{

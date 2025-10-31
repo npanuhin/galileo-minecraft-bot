@@ -19,7 +19,7 @@ export async function handleScheduled() {
 		console.error('Failed to get server status:', error)
 		if (lastMessageId) {
 			try {
-				await deleteMessage(env.TELEGRAM_CHAT_ID, lastMessageId)
+				await deleteMessage({chatId: env.TELEGRAM_CHAT_ID, messageId: lastMessageId})
 			} catch (e) {
 				console.error('Failed to delete message on API error:', e)
 			} finally {
@@ -44,7 +44,7 @@ export async function handleScheduled() {
 			try {
 				// console.log(`Editing message ${lastMessageId} to: "${messageText}"`)
 				if (messageText !== lastMessageText) {
-					await editMessage(env.TELEGRAM_CHAT_ID, lastMessageId, messageText)
+					await editMessage({chatId: env.TELEGRAM_CHAT_ID, messageId: lastMessageId, text: messageText})
 				}
 				await setPlayerState(currentPlayerCount, lastMessageId, messageText)
 			} catch (error: any) {
@@ -60,14 +60,14 @@ export async function handleScheduled() {
 			}
 		} else {
 			console.log(`Sending new status message: "${messageText}"`)
-			const newMessage = await sendMessage(env.TELEGRAM_CHAT_ID, messageText, true)
+			const newMessage = await sendMessage({chatId: env.TELEGRAM_CHAT_ID, text: messageText})
 			await setPlayerState(currentPlayerCount, newMessage.message_id, messageText)
 		}
 	} else {
 		if (lastMessageId) {
 			console.log('Server is offline, deleting status message')
 			try {
-				await deleteMessage(env.TELEGRAM_CHAT_ID, lastMessageId)
+				await deleteMessage({chatId: env.TELEGRAM_CHAT_ID, messageId: lastMessageId})
 			} catch (e) {
 				console.error('Failed to delete status message:', e)
 			} finally {

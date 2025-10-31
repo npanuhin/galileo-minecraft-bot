@@ -23,12 +23,15 @@ export const locales = {
 		starting: 'Хорошо, удаляю файл сохранений...',
 		done: 'Файл сохранений успешно удалён 👍',
 	},
-	help: `Список команд:
+	help: `
+Список команд:
 /status — Что по серверу?
-/balance — Сколько кредитов осталось?`,
+/balance — Сколько кредитов осталось?
+`,
 	errors: {
 		generic: (message: string) => `❌ Ошибка: ${message}`,
 		api: (status: number, message: string) => `API Error: ${status} - ${message}`,
+		markdownV2: '❌ Ошибка при отправке сообщения MarkdownV2',
 	},
 	scheduled: {
 		goMine: (playerCount: number) => playerCount > 0
@@ -42,6 +45,8 @@ export const locales = {
 		unregisterFailed: 'Failed to unregister webhook.',
 		error: (error: any) => `Error: ${error}`,
 	},
-	notFound: 'Not found',
-	unauthorized: 'Unauthorized',
+	http: {
+		notFound: 'Not found',
+		unauthorized: 'Unauthorized',
+	}
 }
